@@ -1,5 +1,5 @@
-#ifndef LISTAS_H_
-#define LISTAS_H_
+#ifndef LISTA_H_
+#define LISTA_H_
 
 #include <exception>
 #include <iostream>
