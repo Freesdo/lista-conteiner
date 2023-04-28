@@ -117,17 +117,17 @@ public:
       return;
     }
     if (!position) {
-      novo.setprox(inicio);
+      novo->setprox(inicio);
       inicio = std::move(novo);
       tamanho++;
       return;
     }
     std::shared_ptr<node<T>> it(inicio);
     for (std::size_t i{0}; i < position - 1; ++i) {
-      it = it.getprox();
+      it = it->getprox();
     }
-    novo.setprox(it->getprox());
-    it.setprox(novo);
+    novo->setprox(it->getprox());
+    it->setprox(novo);
     tamanho++;
     return;
   }
