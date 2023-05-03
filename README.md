@@ -22,6 +22,8 @@ MinhaLista.busca(T achado); <-> retorna um std::size_t da posição do valor pro
 MinhaLista.getlista(); <-> retorna void mas imprime toda a lista
 MinhaLista.insert(T dado,std::size_t position) <-> insere o elemento na posição selecionada
 MinhaLista.size() <-> retorna o tamanho da lista
+MinhaLista.at(posição) <-> retorna o dado na posição selecionada
+MinhaLista.ptr_at(posição) <-> retorna o ponteiro na posição selecionada
 ```
 
 
