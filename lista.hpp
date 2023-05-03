@@ -12,26 +12,32 @@
 // adaptar esse tipo de estrutura para qualquer tipo utilizando um template,
 // como um vector
 namespace mof {
-template <typename T> class node {
-public:
-  node(T dado) : dado_(dado), prox_(nullptr) {}
-  node() { prox_ = nullptr; }
-  void setprox(std::shared_ptr<node<T>> prox) { prox_ = prox; }
-  std::shared_ptr<node<T>> getprox() const { return prox_; }
-  T getdado() const { return dado_; }
-  T get_prox_dado() const { return prox_->getdado(); }
-  void desalloc() { prox_.reset(); }
+template <typename T> class lista {
 
 private:
-  T dado_;
+  template <typename U> class node {
+  public:
+    node(U dado) : dado_(dado), prox_(nullptr) {}
+    node() { prox_ = nullptr; }
+    void setprox(std::shared_ptr<node<U>> prox) { prox_ = prox; }
+    std::shared_ptr<node<U>> getprox() const { return prox_; }
+    U getdado() const { return dado_; }
+    U get_prox_dado() const { return prox_->getdado(); }
+    void desalloc() { prox_.reset(); }
 
-  std::shared_ptr<node<T>> prox_;
-};
+  private:
+    U dado_;
+    std::shared_ptr<node<U>> prox_;
+  };
 
-template <typename T> class lista {
+  std::shared_ptr<node<T>> inicio;
+  std::size_t tamanho;
+
 public:
   lista() : inicio(nullptr), tamanho(0) {}
+
   std::size_t size() const { return tamanho; }
+
   void getlista() const {
     std::shared_ptr<node<T>> it(inicio);
     while (it) {
@@ -39,16 +45,32 @@ public:
       it = it->getprox();
     }
   }
-  size_t busca(T dado) const {
-    std::shared_ptr<node<T>> it = inicio;
-    size_t count{};
-    while (it->getdado() != dado) {
-      count++;
-      it = it->getprox();
+
+  T at(std::size_t position) {
+    if (position >= tamanho) {
+      throw std::out_of_range("invalid position");
+    } else {
+      std::shared_ptr<node<T>> iterator{inicio};
+      while (position) {
+        iterator = iterator->getprox();
+        position--;
+      }
+      return iterator->getdado();
     }
-    return count;
   }
+  std::shared_ptr<node<T>> ptr_at(std::size_t position) {
+    if (position >= tamanho)
+      return nullptr;
+    std::shared_ptr<node<T>> iterator{inicio};
+    while (position) {
+      iterator = iterator->getprox();
+      position--;
+    }
+    return iterator;
+  }
+
   bool vazia() const { return inicio ? false : true; }
+
   void push_back(T element) {
     if (typeid(element).name() != typeid(T).name()) {
       throw std::bad_cast();
@@ -74,20 +96,24 @@ public:
     it->setprox(novo);
     tamanho++;
   }
+
   bool erase(T achado) {
-    if (vazia()) {
-      throw std::runtime_error("Lista vazia");
+    if (vazia() || typeid(achado).name() != typeid(T).name()) {
       return false;
     }
     if (inicio->getdado() == achado) {
+      std::shared_ptr<node<T>> troca{inicio->getprox()};
       inicio.reset();
+      inicio = troca;
       return true;
     }
-    std::shared_ptr<node<T>> it = inicio;
-    while (it->getdado() != achado) {
+    std::shared_ptr<node<T>> it{inicio};
+    while (it) {
+      if (it->getdado() == achado)
+        break;
       it = it->getprox();
     }
-    std::shared_ptr<node<T>> anterior = inicio;
+    std::shared_ptr<node<T>> anterior{inicio};
     while (anterior->getprox() != it) {
       anterior = anterior->getprox();
     }
@@ -95,6 +121,7 @@ public:
     tamanho--;
     return true;
   }
+
   void insert(T element, std::size_t position) {
     if (typeid(T).name() != typeid(element).name()) {
       throw std::bad_cast();
@@ -131,10 +158,6 @@ public:
     tamanho++;
     return;
   }
-
-private:
-  std::shared_ptr<node<T>> inicio;
-  std::size_t tamanho;
 };
 } // namespace mof
 #endif
