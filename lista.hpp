@@ -30,7 +30,7 @@ namespace mof {
             U dado_;
             std::shared_ptr<node<U>> prox_;
         };
-        template<typename Param, typename... Params>
+        template<typename Param>
         void construirLista(Param first) {
             push_back(first);
         }
